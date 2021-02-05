@@ -123,3 +123,8 @@
 
 *1259번 팰린드롬수*  
 -문자열 비교할때 ==연산자는 객체의 주소값을 비교하므로 string.equals()를 사용해야함  
+*12605번 problem*  
+-stack을 이용한 문제  
+-Stack<String> stack = new Stack<>(); , stack.pop(), stack.push()  
+
+<br>
