@@ -13,6 +13,7 @@ class Main {
 		
 		for(int i=0; i<list[start].size(); i++) {
 			int temp = list[start].get(i);
+			//방문 안했으면 부모로 지정.
 			if(visit[temp] == false) {
 				parent[temp] = start;
 				dfs(temp);
