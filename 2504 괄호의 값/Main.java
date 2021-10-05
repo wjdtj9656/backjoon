@@ -1,62 +1,79 @@
-package javaBaekjoon;
-import java.awt.desktop.SystemEventListener;
-import java.io.*;
-import java.math.*;
-import java.util.*;
-
-public class Main {
-
-	/*
- 	2504 problem 괄호의 값
-	*/
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		// TODO Auto-generated method stub
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-		Stack<Character> stack = new Stack<Character>();
-		
-		String str = br.readLine();
-		int value = 1;
-		int result = 0;
-		
-		for(int i=0; i<str.length(); i++) {
-			
-			if(stack.isEmpty() && (str.charAt(i) == ')' || str.charAt(i) == ']')) {
-				result = 0;
-				break;
-			}
-			if(str.charAt(i) == '(') {
-				stack.push(str.charAt(i));
-				value *= 2;
-			}
-			else if(str.charAt(i) == '[') {
-				stack.push(str.charAt(i));
-				value *= 3;
-			}
-			if(str.charAt(i) == ')' && i>=1) {
-				if(str.charAt(i-1) == '(') {
-					result += value;
-				}
-				stack.pop();
-				value /= 2;
-			}
-			else if(str.charAt(i) == ']' && i>=1) {
-				
-				if(str.charAt(i-1) == '[') {
-					result += value;
-				}
-				stack.pop();
-				value /= 3;
-			}
+	import java.util.*;
+	import java.io.*;
+	
+	class Main {
+		private static boolean isBrace(String temp, String peek) {
+			if(temp.equals(peek)) return true;
+			return false;
 		}
-		if(stack.empty()) {
-			bw.write(String.valueOf(result));
+		private static boolean isNumber(String peek) {
+			if(peek.equals(")") || peek.equals("]")) return false;
+			return true;
 		}
-		else {
-			bw.write(String.valueOf(0));
-		}
-		bw.flush();
-		bw.close();
+	    public static void main(String args[]) throws IOException {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	    	BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	    	
+	    	String s = br.readLine();
+	    	Stack<String> stack = new Stack<>();
+	    	boolean isAble = true;
+	    	for(int i=0; i<s.length(); i++) {
+	    	
+	    		String temp = s.substring(i,i+1);
+	    		
+	    		if(temp.equals("(")) {
+	    			stack.push(")");
+	    			continue;
+	    		}
+	    		if(temp.equals("[")) {
+	    			stack.push("]");
+	    			continue;
+	    		}
+	    		int num = 0;
+	    		while(true) {
+	    			if(stack.isEmpty()) {
+	    				isAble = true;
+	    				break;
+	    			}
+	    			if(isNumber(stack.peek())) {
+	    				num += Integer.parseInt(stack.pop());
+	    			}
+	    			else {
+	    				if(isBrace(temp,stack.peek())) {
+	    					stack.pop();
+	    					int t = (")".equals(temp)) ? 2:3;
+	    					
+	    					if(num == 0) {
+	    						stack.push(String.valueOf(t));
+	    					}
+	    					else {
+	    						stack.push(String.valueOf(t*num));
+	    					}
+	    					break;
+	    				}
+	    				else {
+	    					isAble = false;
+	    					break;
+	    				}
+	    			}
+	    			
+	    		}
+	    		if(!isAble) break;
+	    	}
+	    	int result = 0;
+	    	while(!stack.isEmpty()) {
+	    		if(isNumber(stack.peek())) {
+	    			result += Integer.parseInt(stack.pop());
+	    		}
+	    		else {
+	    			isAble = false;
+	    			break;
+	    		}
+	    	}
+	    	if(isAble) bw.write(String.valueOf(result));
+	    	else bw.write(String.valueOf(0));
+	    	br.close();
+	    	bw.flush();
+	    	bw.close();
+	    }
 	}
-}
