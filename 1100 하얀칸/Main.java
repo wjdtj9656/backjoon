@@ -15,11 +15,13 @@ import java.io.*;
 	    		String s = br.readLine();
 	    		for(int j=0; j<8; j++) {
 	    			map[i][j] = s.charAt(j);
+	    			//Â¦¼öÁÙ¿¡ Â¦¼ö¹øÂ° Ä­ °Ë»ç(0µµ Â¦¼ö)
 	    			if(i%2==0) {
 	    				if(j%2==0) {
 	    					if(map[i][j] == 'F') result++;
 	    				}
 	    			}
+	    			//È¦¼öÁÙ¿¡ È¦¼ö¹øÂ° Ä­ °Ë»ç
 	    			else if(i%2==1) {
 	    				if(j%2==1) {
 	    					if(map[i][j] == 'F') result++;
