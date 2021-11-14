@@ -4,8 +4,7 @@ import java.io.*;
 	class Main {
 		static int N,M;
 		static int arr[];
-		static boolean[] visit;
-		public static void dfs(int N, int M, int depth) {
+		public static void dfs(int n, int depth) {
 			if(depth == M) {
 				for(int val : arr) {
 					System.out.print(val+" ");
@@ -13,13 +12,9 @@ import java.io.*;
 				System.out.println();
 				return;
 			}
-			for(int i=0; i<N; i++) {
-				if(!visit[i]) {
-					visit[i] = true;
-					arr[depth] = i+1;
-					dfs(N, M, depth+1);
-					visit[i] = false;
-				}
+			for(int i=n; i<=N; i++) {
+					arr[depth] = i;
+					dfs(i+1, depth+1);
 			}
 		}
 		public static void main(String args[]) throws IOException {
@@ -29,9 +24,8 @@ import java.io.*;
 	    	StringTokenizer st = new StringTokenizer(br.readLine());
 	    	N = Integer.parseInt(st.nextToken());
 	    	M = Integer.parseInt(st.nextToken());
-	    	visit = new boolean[N];
 	    	arr = new int[M];
-	    	dfs(N, M, 0);
+	    	dfs(1, 0);
 	    	br.close();
 	    	bw.flush();
 	    	bw.close();
