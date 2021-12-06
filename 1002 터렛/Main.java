@@ -5,7 +5,6 @@ import java.math.*;
 import java.util.*;
 
 public class Main {
-
 	/*
  	 1002 problem
 	*/
