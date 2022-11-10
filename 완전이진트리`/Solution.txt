@@ -1,0 +1,36 @@
+import java.util.*;
+import java.util.regex.Pattern;
+import java.io.*;
+
+public class Main {
+	static int K;
+	static int arr[];
+	static StringBuffer ans[];
+	static void find(int start, int end, int now) {
+		if(now == K) return;
+		int mid = (start+end)/2;
+		ans[now].append(arr[mid]+" ");
+		find(start,mid-1,now+1);
+		find(mid+1,end,now+1);
+		
+	}
+ 	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		K = Integer.parseInt(br.readLine());
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		arr = new int[(int) (Math.pow(2,K)-1)];
+		ans = new StringBuffer[K];
+		int index = 0;
+		while(st.hasMoreTokens()) {
+			arr[index++] = Integer.parseInt(st.nextToken());
+		}
+		for(int i=0; i<K; i++) {
+			ans[i] = new StringBuffer();
+		}
+		find(0,arr.length-1,0);
+		for(int i=0; i<K; i++) {
+			System.out.println(ans[i].toString());
+		}
+		br.close();
+	}
+}
