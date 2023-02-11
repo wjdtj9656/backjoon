@@ -1,0 +1,56 @@
+import java.util.*;
+import java.util.regex.Pattern;
+import java.io.*;
+
+public class Main {
+	static boolean visit[] = new boolean[100000];
+ 	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int N = Integer.parseInt(st.nextToken());
+		int T = Integer.parseInt(st.nextToken());
+		int G = Integer.parseInt(st.nextToken());
+		int result = bfs(N, G, T);
+		if(result == -1) System.out.println("ANG");
+		else System.out.println(result);
+		br.close();
+	}
+ 	public static int bfs(int number, int target, int maxTry) {
+ 		Queue<int[]> q = new LinkedList<>();
+ 		q.add(new int[] {number,0});
+ 		while(!q.isEmpty()) {
+ 			int[] now = q.poll();
+ 			int nowN = now[0];
+ 			int cnt = now[1];
+ 			//방문한곳
+ 			if(visit[nowN]) continue;
+ 			visit[nowN] = true;
+ 			//버튼누를 수 있는 횟수 초과
+ 			if(maxTry < cnt) return -1;
+ 			//목적지 도착
+ 			if(nowN == target) return cnt;
+ 			//값이 99999면 더이상 버튼을 누를 수 없음
+ 			if(nowN == 99999) continue;
+ 			if(!visit[nowN+1]) q.add(new int[] {nowN+1, cnt+1});
+ 			//값이 0이면 두배버튼을 눌러봤자임
+ 			if(nowN == 0) continue;
+ 			nowN *= 2;
+ 			//곱하기 버튼을 눌렀을때 99999가 넘어가면 실패
+ 			if(nowN > 99999) continue;
+ 			String str = String.valueOf(nowN);
+ 			char[] temp = str.toCharArray();
+ 			for(int i=0; i<temp.length; i++) {
+ 				if(temp[i] =='0') continue;
+ 				else {
+ 					int num = temp[i] - '0';
+ 					temp[i] = String.valueOf(num-1).charAt(0);
+ 					str = new String(temp);
+ 					int result = Integer.parseInt(str);
+ 					if(!visit[result]) q.add(new int[] {result,cnt+1});
+ 					break;
+ 				}	
+ 			}
+ 		}
+ 		return -1;
+ 	}
+}
