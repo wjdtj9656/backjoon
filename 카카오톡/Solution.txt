@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+
+// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
+// then press Enter. You can now see whitespace characters in your code.
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        HashMap<String, Integer> map = new HashMap<>();
+        long result = 0;
+
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            if (b != 0) {
+                int gcdAB = gcd(a, b);
+                a /= gcdAB;
+                b /= gcdAB;
+            }
+
+            String key = a + "," + b;
+            map.put(key, map.getOrDefault(key, 0) + 1);
+        }
+
+        for (int value : map.values()) {
+            result += value * (n - value);
+        }
+
+        result /= 2;
+        System.out.println(result);
+    }
+
+    public static int gcd(int a, int b) {
+        if (b == 0) return a;
+        return gcd(b, a % b);
+    }
+}
