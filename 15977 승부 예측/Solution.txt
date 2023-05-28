@@ -1,0 +1,107 @@
+import java.io.*;
+import java.util.*;
+
+// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
+// then press Enter. You can now see whitespace characters in your code.
+public class Main {
+    static String[] teams;
+    static String[][] team;
+    static double[][] probabilities;
+    static double[] points;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        teams = new String[4];
+        probabilities = new double[6][3];
+        team = new String[6][2];
+        points = new double[4];
+        //팀명 저장
+        for(int i=0; i<4; i++){
+            teams[i] = st.nextToken();
+
+        }
+        //6경기의 팀, 확률 저장
+        for(int i=0; i<6; i++){
+            st = new StringTokenizer(br.readLine());
+            team[i][0] = st.nextToken();
+            team[i][1] = st.nextToken();
+            probabilities[i][0] = Double.parseDouble(st.nextToken());
+            probabilities[i][1] = Double.parseDouble(st.nextToken());
+            probabilities[i][2] = Double.parseDouble(st.nextToken());
+      }
+        HashMap<String,Integer> map = new HashMap<>();
+        for(int i=0; i<4; i++){
+            map.put(teams[i],0);
+        }
+
+        dfs(0,1.0, map);
+        
+        for(int i=0; i<4; i++){
+            System.out.println(points[i]);
+        }
+    }
+    public static void dfs(int index,double point,HashMap<String,Integer> map){
+        if(index == 6){
+            if(point != 0) {
+                int rank1 = 0;
+                int rank2 = 0;
+                for (int i = 0; i < 4; i++) {
+                    rank1 = Math.max(rank1, map.get(teams[i]));
+                }
+                for(int i=0; i<4; i++){
+                    if(map.get(teams[i]) == rank1) continue;
+                    rank2 = Math.max(rank2, map.get(teams[i]));
+                }
+                int rank1Cnt = 0;
+                int rank2Cnt = 0;
+                for(int i=0; i<4; i++){
+                    if(rank1 == map.get(teams[i])) rank1Cnt++;
+                    if(rank2 == map.get(teams[i])) rank2Cnt++;
+                }
+                //rank수에 따른 분기
+                if(rank1Cnt == 2){
+                    for(int i=0; i<4; i++){
+                        if(rank1 == map.get(teams[i])) points[i] += point;
+                    }
+                }
+                else if(rank1Cnt == 3){
+                    for(int i=0; i<4; i++){
+                        if(rank1 == map.get(teams[i])) points[i] += point*2/3;
+                    }
+                }
+                else if(rank1Cnt == 4){
+                    for(int i=0; i<4; i++){
+                        if(rank1 == map.get(teams[i])) points[i] += point/2;
+                    }
+                }
+                else{
+                    for(int i=0; i<4; i++){
+                        if(rank1 == map.get(teams[i])) points[i] += point;
+                        if(rank2 == map.get(teams[i])) points[i] += point/rank2Cnt;
+                    }
+                }
+            }
+            return;
+        }
+        //dfs 이길 때/ 비길 때/ 질 때
+        for(int i=0; i<3; i++){
+            if(i == 0){
+                map.put(team[index][0],map.getOrDefault(team[index][0],0)+3);
+                dfs(index+1, point*probabilities[index][i], map);
+                map.put(team[index][0],map.get(team[index][0])-3);
+            }
+            else if(i == 1){
+                map.put(team[index][0],map.getOrDefault(team[index][0],0)+1);
+                map.put(team[index][1],map.getOrDefault(team[index][1],0)+1);
+                dfs(index+1, point*probabilities[index][i], map);
+                map.put(team[index][0],map.getOrDefault(team[index][0],0)-1);
+                map.put(team[index][1],map.getOrDefault(team[index][1],0)-1);
+            }
+            else if(i == 2) {
+                map.put(team[index][1],map.getOrDefault(team[index][1],0)+3);
+                dfs(index+1, point*probabilities[index][i], map);
+                map.put(team[index][1],map.getOrDefault(team[index][1],0)-3);
+            }
+        }
+    }
+}
