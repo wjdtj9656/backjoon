@@ -1,0 +1,20 @@
+const fs = require("fs");
+const input = fs.readFileSync("./input.txt").toString().split("\n");
+let [N, C] = input[0];
+N = Number(N);
+C = Number(C);
+const map = new Map();
+const arr = input[1].split(" ");
+for (let i = 0; i < arr.length; i++) {
+  map.set(Number(arr[i]), (map.get(Number(arr[i])) || 0) + 1);
+}
+const result = [...map];
+result.sort((a, b) => b[1] - a[1]);
+let res = "";
+for (let i = 0; i < result.length; i++) {
+  let [value, num] = result[i];
+  for (let j = 0; j < num; j++) {
+    res += value + " ";
+  }
+}
+console.log(res.slice(0, res.length - 1));
