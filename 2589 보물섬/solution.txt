@@ -1,0 +1,47 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("dev/stdin").toString().split("\n");
+
+const [n, m] = input[0].split(" ").map(Number);
+
+const arr = new Array(n).fill("").map((v) => new Array(m).fill(""));
+
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < m; j++) {
+    arr[i][j] = input[i + 1][j];
+  }
+}
+const dx = [-1, 0, 1, 0];
+const dy = [0, -1, 0, 1];
+//let set = new Set();
+let res = 0;
+const go = (x, y, cnt) => {
+  const visited = Array.from(Array(n), () => Array(m).fill(false));
+  //set.add(`${x}-${y}`);
+  visited[x][y] = true;
+  const q = [[x, y, cnt]];
+  while (q.length) {
+    let [cx, cy, cnt] = q.shift();
+    for (let i = 0; i < 4; i++) {
+      let nx = cx + dx[i];
+      let ny = cy + dy[i];
+      if (nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
+      if (arr[nx][ny] == "W") continue;
+      // if (set.has(`${nx}-${ny}`)) continue;
+      if (visited[nx][ny]) continue;
+      //set.add(`${cx}-${cy}`);
+      visited[nx][ny] = true;
+      q.push([nx, ny, cnt + 1]);
+      res = Math.max(res, cnt + 1);
+    }
+  }
+};
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < m; j++) {
+    if (arr[i][j] == "L") {
+      //set = new Set();
+      go(i, j, 0);
+    }
+  }
+}
+console.log(res);
