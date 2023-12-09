@@ -1,0 +1,56 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("dev/stdin").toString().split("\n");
+
+const [R, C] = input[0].split(" ").map(Number);
+const fireMap = new Array(R)
+  .fill(Infinity)
+  .map((v) => new Array(C).fill(Infinity));
+const jihoonMap = new Array(R).fill(0).map((v) => new Array(C).fill(0));
+
+const jihoon = [];
+const fire = [];
+const dx = [-1, 0, 1, 0];
+const dy = [0, -1, 0, 1];
+for (let i = 1; i < input.length; i++) {
+  for (let j = 0; j < C; j++) {
+    if (input[i][j] == "#") {
+    } else if (input[i][j] == ".") {
+    } else if (input[i][j] == "J") {
+      jihoon.push([i - 1, j]);
+    } else if (input[i][j] == "F") {
+      fire.push([i - 1, j]);
+      fireMap[i - 1][j] = 0;
+    }
+  }
+}
+while (fire.length) {
+  const [x, y] = fire.shift();
+  for (let i = 0; i < 4; i++) {
+    let nx = x + dx[i];
+    let ny = y + dy[i];
+    if (nx < 0 || ny < 0 || nx >= R || ny >= C) continue;
+    if (fireMap[nx][ny] != Infinity) continue;
+    if (input[nx + 1][ny] == "#") continue;
+    fireMap[nx][ny] = fireMap[x][y] + 1;
+    fire.push([nx, ny]);
+  }
+}
+while (jihoon.length) {
+  const [x, y] = jihoon.shift();
+  if (x == 0 || y == 0 || x == R - 1 || y == C - 1) {
+    console.log(jihoonMap[x][y] + 1);
+    return;
+  }
+  for (let i = 0; i < 4; i++) {
+    let nx = x + dx[i];
+    let ny = y + dy[i];
+    if (nx < 0 || ny < 0 || nx >= R || ny >= C) continue;
+    if (jihoonMap[nx][ny]) continue;
+    if (input[nx + 1][ny] == "#") continue;
+    if (fireMap[nx][ny] <= jihoonMap[x][y] + 1) continue;
+    jihoonMap[nx][ny] = jihoonMap[x][y] + 1;
+    jihoon.push([nx, ny]);
+  }
+}
+console.log("IMPOSSIBLE");
