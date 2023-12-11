@@ -1,0 +1,44 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().split("\n");
+
+const n = input[0];
+const [a1, a2, a3, a4] = input[1].split(" ").map(Number);
+const arr = [];
+let max = Infinity;
+for (let i = 2; i < input.length; i++) {
+  arr.push(input[i].split(" ").map(Number));
+}
+let ans = [];
+for (let i = 0; i < 1 << n; i++) {
+  let a = 0,
+    b = 0,
+    c = 0,
+    d = 0,
+    e = 0;
+  const res = [];
+  for (let j = 0; j < n; j++) {
+    if (i & (1 << j)) {
+      res.push(j + 1);
+      a += arr[j][0];
+      b += arr[j][1];
+      c += arr[j][2];
+      d += arr[j][3];
+      e += arr[j][4];
+    }
+  }
+  if (a >= a1 && b >= a2 && c >= a3 && d >= a4) {
+    if (e <= max) {
+      if (e < max) ans = [];
+      max = e;
+      res.sort((a, b) => a - b);
+      ans.push(res);
+    }
+  }
+}
+if (max == Infinity) {
+  console.log(-1);
+  return;
+}
+console.log(max);
+console.log(ans.sort()[0].join(" "));
