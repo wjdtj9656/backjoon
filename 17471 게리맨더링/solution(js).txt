@@ -1,0 +1,56 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().split("\n");
+
+const n = Number(input[0]);
+
+const people = input[1].split(" ").map(Number);
+let res = Infinity;
+let comp = new Array(11).fill(0);
+let visited = new Array(11).fill(0);
+let adj = new Array(11).fill(0).map((v) => new Array(11).fill(0));
+
+const dfs = (here, value) => {
+  visited[here] = 1;
+  let res = [1, people[here]];
+  for (let i = 0; i < adj[here].length; i++) {
+    if (i >= n) continue;
+    if (adj[here][i] == 0) continue;
+    if (comp[i] !== value) continue;
+    if (visited[i]) continue;
+    let temp = dfs(i, value);
+    res[0] += temp[0];
+    res[1] += temp[1];
+  }
+  return res;
+};
+for (let i = 2; i < input.length; i++) {
+  const line = input[i].split(" ").map(Number);
+  const num = line[0];
+  for (let j = 0; j < num; j++) {
+    adj[i - 2][line[j + 1] - 1] = 1;
+    adj[line[j + 1] - 1][i - 2] = 1;
+  }
+}
+
+for (let i = 1; i < (1 << n) - 1; i++) {
+  comp.fill(0);
+  visited.fill(0);
+  let idx1 = -1,
+    idx2 = -1;
+  for (let j = 0; j < n; j++) {
+    if (i & (1 << j)) {
+      comp[j] = 1;
+      idx1 = j;
+    } else {
+      idx2 = j;
+    }
+  }
+  //console.log(idx1, idx2, comp);
+  let comp1 = dfs(idx1, 1);
+  let comp2 = dfs(idx2, 0);
+  if (comp1[0] + comp2[0] == n) {
+    res = Math.min(res, Math.abs(comp1[1] - comp2[1]));
+  }
+}
+console.log(res === Infinity ? -1 : res);
