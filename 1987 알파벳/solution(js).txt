@@ -1,0 +1,34 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().split("\n");
+
+const [R, C] = input[0].split(" ").map(Number);
+
+const arr = new Array(R).fill(0).map((v) => new Array(C).fill(0));
+
+for (let i = 1; i < input.length; i++) {
+  let str = input[i];
+  for (let j = 0; j < input[i].length; j++) {
+    if (str[j] == "\r") continue;
+    arr[i - 1][j] = str[j];
+  }
+}
+let res = 0;
+const dx = [-1, 0, 1, 0];
+const dy = [0, -1, 0, 1];
+const dfs = (x, y, num, cnt) => {
+  res = Math.max(res, cnt);
+  for (let i = 0; i < 4; i++) {
+    let nx = x + dx[i];
+    let ny = y + dy[i];
+    if (nx < 0 || ny < 0 || nx >= R || ny >= C) continue;
+    let _next = 1 << (arr[nx][ny].charCodeAt() - 65);
+    if ((num & _next) == 0) {
+      dfs(nx, ny, num | _next, cnt + 1);
+    }
+  }
+  return;
+};
+
+dfs(0, 0, 1 << (arr[0][0].charCodeAt() - 65), 1);
+console.log(res);
