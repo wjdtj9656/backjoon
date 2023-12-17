@@ -1,0 +1,33 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt", "utf-8").trim().split("\n");
+
+const [N, L] = input[0].split(" ").map(Number);
+
+let arr = new Array(N).fill(0).map((v) => new Array(N).fill(0));
+let arr2 = new Array(N).fill(0).map((v) => new Array(N).fill(0));
+let res = 0;
+for (let i = 1; i < input.length; i++) {
+  let str = input[i].split(" ").map(Number);
+  for (let j = 0; j < str.length; j++) {
+    arr[i - 1][j] = str[j];
+    arr2[j][i - 1] = str[j];
+  }
+}
+const solve = (arr) => {
+  for (let i = 0; i < N; i++) {
+    let cnt = 1;
+    let j = 0;
+    for (j = 0; j < N - 1; j++) {
+      if (arr[i][j] == arr[i][j + 1]) cnt++;
+      else if (arr[i][j] + 1 == arr[i][j + 1] && cnt >= L) cnt = 1;
+      else if (arr[i][j] == arr[i][j + 1] + 1 && cnt >= 0) cnt = -L + 1;
+      else break;
+    }
+    if (j == N - 1 && cnt >= 0) res++;
+  }
+  return;
+};
+solve(arr);
+solve(arr2);
+console.log(res);
