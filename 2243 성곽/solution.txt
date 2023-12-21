@@ -1,0 +1,60 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().trim().split("\n");
+
+const [n, m] = input[0].split(" ").map(Number);
+
+const arr = new Array(m).fill(0).map(() => new Array(n).fill(0));
+const visit = new Array(m).fill(0).map(() => new Array(n).fill(0));
+const cntArr = [];
+let size = 0;
+for (let i = 0; i < m; i++) {
+  let s = input[i + 1].split(" ").map(Number);
+  for (let j = 0; j < s.length; j++) {
+    arr[i][j] = s[j];
+  }
+}
+let dx = [0, -1, 0, 1];
+let dy = [-1, 0, 1, 0];
+const dfs = (x, y, cnt) => {
+  for (let i = 0; i < 4; i++) {
+    if ((arr[x][y] & (1 << i)) == 0) {
+      let nx = x + dx[i];
+      let ny = y + dy[i];
+      if (nx < 0 || nx >= m || ny < 0 || ny >= n) continue;
+      if (visit[nx][ny] == cnt) continue;
+      visit[nx][ny] = cnt;
+      cntArr[cnt]++;
+      dfs(nx, ny, cnt);
+    }
+  }
+};
+let cnt = 0;
+for (let i = 0; i < m; i++) {
+  for (let j = 0; j < n; j++) {
+    if (visit[i][j] == 0) {
+      visit[i][j] = ++cnt;
+      cntArr[cnt] = 1;
+      dfs(i, j, cnt);
+    }
+  }
+}
+
+for (let i = 0; i < m; i++) {
+  for (let j = 0; j < n; j++) {
+    if (i + 1 < m) {
+      if (visit[i][j] != visit[i + 1][j]) {
+        size = Math.max(size, cntArr[visit[i][j]] + cntArr[visit[i + 1][j]]);
+      }
+    }
+    if (j + 1 < n) {
+      if (visit[i][j] != visit[i][j + 1]) {
+        size = Math.max(size, cntArr[visit[i][j]] + cntArr[visit[i][j + 1]]);
+      }
+    }
+  }
+}
+console.log(cnt);
+cntArr[0] = 0;
+console.log(Math.max(...cntArr));
+console.log(size);
