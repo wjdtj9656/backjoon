@@ -1,0 +1,45 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().trim().split("\n");
+
+const [N, M] = input[0].split(" ").map(Number);
+
+const arr = new Array(N).fill(0).map(() => new Array(M).fill(0));
+let res = 0;
+for (let i = 0; i < N; i++) {
+  let s = input[i + 1].split("").map(Number);
+  for (let j = 0; j < M; j++) {
+    arr[i][j] = s[j];
+  }
+}
+for (let k = 0; k < 1 << (M * N); k++) {
+  let sum = 0;
+  for (let i = 0; i < N; i++) {
+    let cur = 0;
+    for (let j = 0; j < M; j++) {
+      let now = i * M + j;
+      if ((k & (1 << now)) == 0) {
+        cur = cur * 10 + arr[i][j];
+      } else {
+        sum += cur;
+        cur = 0;
+      }
+    }
+    sum += cur;
+  }
+  for (let j = 0; j < M; j++) {
+    let cur = 0;
+    for (let i = 0; i < N; i++) {
+      let now = i * M + j;
+      if ((k & (1 << now)) !== 0) {
+        cur = cur * 10 + arr[i][j];
+      } else {
+        sum += cur;
+        cur = 0;
+      }
+    }
+    sum += cur;
+  }
+  res = Math.max(res, sum);
+}
+console.log(res);
