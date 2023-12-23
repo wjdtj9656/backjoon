@@ -1,0 +1,26 @@
+const fs = require("fs");
+
+const input = fs.readFileSync("input.txt").toString().trim().split("\n");
+
+const n = Number(input[0]);
+
+let num = 0;
+for (let i = 1; i <= 26; i++) {
+  let [a, b] = input[i].split(" ");
+  a = a.trim();
+  b = Number(b);
+  if (a == "add") {
+    num |= 1 << b;
+  } else if (a == "remove") {
+    num &= ~(1 << b);
+  } else if (a == "check") {
+    if (num & (1 << b)) console.log(1);
+    else console.log(0);
+  } else if (a == "toggle") {
+    num ^= 1 << b;
+  } else if (a == "all") {
+    num = (1 << 21) - 1;
+  } else if (a == "empty") {
+    num = 0;
+  }
+}
