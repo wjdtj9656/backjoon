@@ -1,0 +1,51 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+let input = [];
+rl.on("line", function (line) {
+  input.push(line);
+}).on("close", function () {
+  const T = Number(input[0]);
+  let index = 1;
+  let visit = [];
+  let arr = [];
+  let n = 0,
+    m = 0,
+    cnt = 0;
+  const dfs = (now) => {
+    visit[now] = 1;
+    for (let i = 0; i < n; i++) {
+      if (!visit[i] && arr[now][i] == 1) {
+        dfs(i);
+      }
+    }
+  };
+  for (let tc = 0; tc < T; tc++) {
+    n = Number(input[index++]);
+    m = Number(input[index++]);
+    visit = new Array(n).fill(0);
+    arr = new Array(n).fill(0).map(() => new Array(n).fill(0));
+    for (let i = 0; i < m; i++) {
+      let [start, end] = input[index++].split(" ").map(Number);
+      arr[start - 1][end - 1] = 1;
+      arr[end - 1][start - 1] = 1;
+    }
+    cnt = 0;
+    for (let i = 0; i < n; i++) {
+      if (!visit[i]) {
+        dfs(i);
+        cnt++;
+      }
+    }
+    if (cnt == 1 && n - 1 == m) {
+      console.log("tree");
+    } else {
+      console.log("graph");
+    }
+  }
+  process.exit();
+});
