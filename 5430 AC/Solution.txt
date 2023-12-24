@@ -1,0 +1,52 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  let index = 0;
+  const T = Number(input[index++]);
+  for (let tc = 0; tc < T; tc++) {
+    let s = input[index++];
+    let n = Number(input[index++]);
+    let arr = [];
+    if (input[index].length == 2) {
+      arr = [];
+      index++;
+    } else {
+      arr = input[index]
+        .slice(1, input[index++].length - 1)
+        .split(",")
+        .map(Number);
+    }
+    let flag = 0;
+    let isError = false;
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] == "R") flag ^= 1;
+      if (s[i] == "D") {
+        if (arr.length == 0) {
+          isError = true;
+          break;
+        }
+        if (flag) {
+          arr.pop();
+        } else {
+          arr.shift();
+        }
+      }
+    }
+    if (isError) {
+      console.log("error");
+    } else {
+      if (!flag) {
+        console.log("[" + arr.join(",") + "]");
+      } else {
+        console.log("[" + arr.reverse().join(",") + "]");
+      }
+    }
+  }
+});
