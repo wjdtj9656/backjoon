@@ -1,0 +1,17 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+let str = "";
+rl.on("line", (line) => {
+  str = line;
+}).on("close", () => {
+  str = str.replaceAll("pi", ".");
+  str = str.replaceAll("ka", ".");
+  str = str.replaceAll("chu", ".");
+  str = str.split("").filter((v) => v !== ".");
+  if (str.length == 0) console.log("YES");
+  else console.log("NO");
+});
