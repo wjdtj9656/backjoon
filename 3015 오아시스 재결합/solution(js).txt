@@ -1,0 +1,31 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(Number(line));
+}).on("close", () => {
+  const n = input[0];
+  const stk = [];
+  let res = 0;
+  for (let i = 1; i <= n; i++) {
+    let num = input[i];
+    let cnt = 1;
+    while (stk.length && stk[stk.length - 1][0] <= num) {
+      res += stk[stk.length - 1][1];
+      if (stk[stk.length - 1][0] == num) {
+        cnt = stk[stk.length - 1][1] + 1;
+      } else {
+        cnt = 1;
+      }
+      stk.pop();
+    }
+    if (stk.length) res++;
+    stk.push([num, cnt]);
+  }
+  console.log(res);
+});
