@@ -1,0 +1,27 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const arr = [];
+  for (let i = 1; i <= n; i++) {
+    const [p, d] = input[i].split(" ").map(Number);
+    arr.push([d, p]);
+  }
+  arr.sort((a, b) => a[0] - b[0]);
+  const pq = [];
+  for (let i = 0; i < n; i++) {
+    pq.push(arr[i][1]);
+    pq.sort((a, b) => b - a);
+    while (pq.length > arr[i][0]) {
+      pq.pop();
+    }
+  }
+  console.log(pq.reduce((a, b) => a + b, 0));
+});

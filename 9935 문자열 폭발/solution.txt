@@ -1,0 +1,27 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  let str = input[0];
+  let str2 = input[1];
+  let pointer = 0;
+  const arr = [];
+  for (let i = 0; i < str.length; i++) {
+    arr.push(str[i]);
+    pointer = str[i];
+    if (
+      pointer == str2[str2.length - 1] &&
+      arr.slice(-str2.length).join("") == str2
+    ) {
+      arr.splice(-str2.length);
+    }
+  }
+  console.log(arr.join("") || "FRULA");
+});
