@@ -1,0 +1,27 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const arr = [];
+  for (let i = 1; i < input.length; i++) {
+    let [start, time] = input[i].split(" ").map(Number);
+    arr.push([start, time]);
+  }
+  arr.sort((a, b) => a[0] - b[0]);
+  let now = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (now < arr[i][0]) {
+      now = arr[i][0];
+    }
+    now += arr[i][1];
+  }
+  console.log(now);
+});
