@@ -1,0 +1,29 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const arr = input[1].split(" ").map(Number);
+  const goal = Number(input[2]);
+  let left = 0;
+  let right = arr.length - 1;
+  let res = 0;
+  arr.sort((a, b) => a - b);
+  while (left < right) {
+    if (arr[left] + arr[right] < goal) {
+      left++;
+    } else if (arr[left] + arr[right] == goal) {
+      left++;
+      res++;
+    } else if (arr[left] + arr[right] > goal) {
+      right--;
+    }
+  }
+  console.log(res);
+});
