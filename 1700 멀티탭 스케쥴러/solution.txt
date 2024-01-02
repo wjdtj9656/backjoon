@@ -1,0 +1,43 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, K] = input[0].split(" ").map(Number);
+  const arr = input[1].split(" ").map(Number);
+  const now = [];
+  const visit = new Array(101).fill(0);
+  let cnt = 0;
+  for (let i = 0; i < K; i++) {
+    if (visit[arr[i]] == 0) {
+      if (now.length == N) {
+        let last = 0,
+          pos = 0;
+        for (let val of now) {
+          let pick = Infinity;
+          for (let j = i + 1; j < K; j++) {
+            if (val == arr[j]) {
+              pick = j;
+              break;
+            }
+          }
+          if (last < pick) {
+            last = pick;
+            pos = val;
+          }
+        }
+        visit[pos] = 0;
+        cnt++;
+        now.splice(now.indexOf(pos), 1);
+      }
+      now.push(arr[i]);
+      visit[arr[i]] = 1;
+    }
+  }
+  console.log(cnt);
+});
