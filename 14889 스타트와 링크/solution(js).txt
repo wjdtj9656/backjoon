@@ -1,0 +1,42 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const N = Number(input[0]);
+  let res = Infinity;
+  const arr = new Array(N).fill(0).map(() => new Array(N).fill(0));
+  for (let i = 0; i < N; i++) {
+    arr[i] = input[i + 1].split(" ").map(Number);
+  }
+  const cal = (arr1, arr2) => {
+    let sum1 = 0;
+    let sum2 = 0;
+    for (let i = 0; i < N / 2; i++) {
+      for (let j = 0; j < N / 2; j++) {
+        if (i == j) continue;
+        sum1 += arr[arr1[i]][arr1[j]];
+        sum2 += arr[arr2[i]][arr2[j]];
+      }
+    }
+    return Math.abs(sum1 - sum2);
+  };
+  for (let i = 0; i < (1 << N) - 1; i++) {
+    let arr1 = [];
+    let arr2 = [];
+    for (let j = 0; j < N; j++) {
+      if (i & (1 << j)) arr1.push(j);
+      else arr2.push(j);
+    }
+    if (arr1.length == arr2.length) {
+      res = Math.min(res, cal(arr1, arr2));
+    }
+  }
+  console.log(res);
+});
