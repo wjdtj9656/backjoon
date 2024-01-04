@@ -1,0 +1,62 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const N = Number(input[0]);
+  const K = Number(input[1]);
+  const arr = new Array(N).fill(0).map(() => new Array(N).fill(0));
+  for (let i = 2; i < 2 + K; i++) {
+    let [L, D] = input[i].split(" ").map(Number);
+    arr[L - 1][D - 1] = 1;
+  }
+  const rotate = [];
+  const L = Number(input[2 + K]);
+  for (let i = 2 + K + 1; i < 2 + K + 1 + L; i++) {
+    let [num, dir] = input[i].split(" ");
+    num = Number(num);
+    rotate.push([num, dir]);
+  }
+  rotate.reverse();
+  let time = 0;
+  const dx = [-1, 0, 1, 0];
+  const dy = [0, 1, 0, -1];
+  const visit = new Array(N).fill(0).map(() => new Array(N).fill(0));
+  let nowDir = 1;
+  let x = 0,
+    y = 0;
+  visit[0][0] = 1;
+  let pos = [[0, 0]];
+  while (true) {
+    time++;
+    let nx = x + dx[nowDir];
+    let ny = y + dy[nowDir];
+    if (nx < 0 || ny < 0 || nx >= N || ny >= N || visit[nx][ny]) break;
+    if (arr[nx][ny] == 1) {
+      arr[nx][ny] = 0;
+    } else {
+      let [px, py] = pos.shift();
+      visit[px][py] = 0;
+    }
+    pos.push([nx, ny]);
+    visit[nx][ny] = 1;
+    if (rotate.length && time == rotate[rotate.length - 1][0]) {
+      if (rotate[rotate.length - 1][1] == "L") {
+        nowDir -= 1;
+        if (nowDir == -1) nowDir = 3;
+      } else if (rotate[rotate.length - 1][1] == "D") {
+        nowDir += 1;
+        nowDir %= 4;
+      }
+      rotate.pop();
+    }
+    x = nx;
+    y = ny;
+  }
+  console.log(time);
+});
