@@ -1,0 +1,95 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+const v = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M, K] = input[0].split(" ").map(Number);
+  let arr = new Array(N).fill(0);
+  for (let i = 0; i < N; i++) {
+    arr[i] = input[i + 1].split(" ").map(Number);
+  }
+  for (let i = N + 1; i < N + 1 + K; i++) {
+    const [r, s, c] = input[i].split(" ").map(Number);
+    v.push([r - 1, s - 1, c]);
+  }
+  const map = [...arr];
+  const visit = new Array(v.length).fill(false);
+  let res = Infinity;
+  let dx = [0, 1, 0, -1];
+  let dy = [1, 0, -1, 0];
+  let dir = 0;
+  let arrVisit = new Array(N).fill(0).map(() => new Array(M).fill(0));
+  let arr3 = [];
+  const rotate = (r, c, s) => {
+    for (let i = 1; i <= s; i++) {
+      let sx = r - 1 * i;
+      let sy = c - 1 * i;
+      let ex = r + 1 * i;
+      let ey = c + 1 * i;
+      let x = sx;
+      let y = sy;
+      arr3 = [];
+      arr3.push([x, y]);
+      while (x != sx || y != ey) {
+        arr3.push([x, ++y]);
+      }
+      while (x != ex || y != ey) {
+        arr3.push([++x, y]);
+      }
+      while (x != ex || y != sy) {
+        arr3.push([x, --y]);
+      }
+      while (x != sx || y != sy) {
+        if (x == sx + 1 && y == sy) break;
+        arr3.push([--x, y]);
+      }
+      let value = [...arr3];
+      let val = value.pop();
+      value.unshift(val);
+      let a = [];
+      for (let i = 0; i < arr3.length; i++) {
+        a.push(arr[value[i][0]][value[i][1]]);
+      }
+      for (let i = 0; i < arr3.length; i++) {
+        arr[arr3[i][0]][arr3[i][1]] = a[i];
+      }
+    }
+  };
+  const arr2 = [];
+  const permu = (now) => {
+    if (now.length == v.length) {
+      arr2.push(now);
+      return;
+    }
+    for (let i = 0; i < v.length; i++) {
+      if (!visit[i]) {
+        visit[i] = true;
+        permu([...now, i]);
+        visit[i] = false;
+      }
+    }
+  };
+  permu([]);
+  for (let i = 0; i < arr2.length; i++) {
+    arr = JSON.parse(JSON.stringify(map));
+    for (let j = 0; j < arr2[i].length; j++) {
+      rotate(v[arr2[i][j]][0], v[arr2[i][j]][1], v[arr2[i][j]][2]);
+    }
+    let value = Infinity;
+    for (let a = 0; a < N; a++) {
+      let sum = 0;
+      for (let b = 0; b < M; b++) {
+        sum += arr[a][b];
+      }
+      value = Math.min(value, sum);
+    }
+    res = Math.min(res, value);
+  }
+  console.log(res);
+});
