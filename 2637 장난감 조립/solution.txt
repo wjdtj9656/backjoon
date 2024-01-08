@@ -1,0 +1,49 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const goal = n - 1;
+  const m = Number(input[1]);
+  const arr = new Array(n).fill(0).map(() => new Array(n).fill(0));
+  const cnt = new Array(n).fill(0);
+  const isBasic = new Array(n).fill(0);
+  let visit = new Array(n).fill(0);
+  for (let i = 2; i < 2 + m; i++) {
+    let [x, y, k] = input[i].split(" ").map(Number);
+    x--;
+    y--;
+    arr[x][y] = k;
+    cnt[y]++;
+    isBasic[x] = 1;
+  }
+  let res = new Array(n).fill(0);
+  const q = [];
+  for (let i = 0; i < n; i++) {
+    if (cnt[i] == 0) {
+      q.push(i);
+      res[i] = 1;
+    }
+  }
+  while (q.length) {
+    let num = q.shift();
+    for (let i = 0; i < n; i++) {
+      if (arr[num][i] != 0) {
+        res[i] += res[num] * arr[num][i];
+        cnt[i]--;
+        if (cnt[i] == 0) q.push(i);
+      }
+    }
+  }
+  for (let i = 0; i < n; i++) {
+    if (!isBasic[i]) {
+      console.log(`${i + 1} ${res[i]}`);
+    }
+  }
+});
