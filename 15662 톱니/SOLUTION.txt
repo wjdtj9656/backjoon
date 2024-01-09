@@ -1,0 +1,61 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const T = Number(input[0]);
+  const arr = [];
+  for (let i = 1; i <= T; i++) {
+    arr.push(input[i].split(""));
+  }
+  const K = Number(input[T + 1]);
+  const rotate = (num, dir) => {
+    if (dir == 1) {
+      arr[num].unshift(arr[num].pop());
+    } else {
+      arr[num].push(arr[num].shift());
+    }
+  };
+  const findLeft = (pos) => {
+    for (let i = pos; i >= 1; i--) {
+      if (arr[i][6] == arr[i - 1][2]) {
+        return i;
+      }
+    }
+    return 0;
+  };
+  const findRight = (pos) => {
+    for (let i = pos; i <= T - 2; i++) {
+      if (arr[i][2] == arr[i + 1][6]) {
+        return i;
+      }
+    }
+    return T - 1;
+  };
+  for (let i = T + 2; i < T + 2 + K; i++) {
+    const [num, dir] = input[i].split(" ").map(Number);
+    //톱니바퀴 오른쪽 2, 톱니바퀴 왼쪽 6
+    let cnt = 0;
+    let left = findLeft(num - 1);
+    let right = findRight(num - 1);
+    for (let j = num - 1; j >= left; j--) {
+      rotate(j, cnt % 2 == 0 ? dir : -dir);
+      cnt++;
+    }
+    cnt = 1;
+    for (let j = num; j <= right; j++) {
+      rotate(j, cnt % 2 == 0 ? dir : -dir);
+      cnt++;
+    }
+  }
+  let res = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i][0] == "1") res++;
+  }
+  console.log(res);
+});
