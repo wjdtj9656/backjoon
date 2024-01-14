@@ -1,0 +1,60 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M] = input[0].split(" ").map(Number);
+  const map = [];
+  let dx = [-1, 0, 1, 0];
+  let dy = [0, -1, 0, 1];
+  for (let i = 1; i <= N; i++) {
+    map.push(input[i].split(" ").map(Number));
+  }
+  const bfs = (sx, sy) => {
+    const q = [[sx, sy]];
+    const visit = new Array(N).fill(0).map(() => new Array(M).fill(0));
+    let changeFlag = false;
+    while (q.length) {
+      let [x, y] = q.shift();
+      for (let i = 0; i < 4; i++) {
+        let nx = x + dx[i];
+        let ny = y + dy[i];
+        if (nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+        if (visit[nx][ny] == 1) continue;
+        visit[nx][ny] = 1;
+        if (map[nx][ny] == 1) {
+          changeFlag = true;
+          map[nx][ny] = 2;
+        } else {
+          q.push([nx, ny]);
+        }
+      }
+    }
+    if (changeFlag) return true;
+    else return false;
+  };
+  const cheeseCnt = () => {
+    let cnt = 0;
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < M; j++) {
+        if (map[i][j] == 1) cnt++;
+      }
+    }
+    return cnt;
+  };
+  let res1 = 0,
+    res2 = cheeseCnt();
+  let prev = res2;
+  while (bfs(0, 0)) {
+    res1++;
+    prev = res2;
+    res2 = cheeseCnt();
+  }
+  console.log(res1);
+  console.log(prev);
+});
