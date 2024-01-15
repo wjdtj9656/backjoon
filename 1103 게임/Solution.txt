@@ -1,0 +1,46 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M] = input[0].split(" ").map(Number);
+  const arr = [];
+  for (let i = 0; i < N; i++) {
+    arr.push(
+      input[i + 1].split("").map((v) => {
+        if (v == "H") return -1;
+        else return Number(v);
+      })
+    );
+  }
+  const visit = new Array(N).fill(0).map(() => new Array(M).fill(0));
+  const dp = new Array(N).fill(0).map(() => new Array(M).fill(0));
+  let dx = [-1, 0, 1, 0];
+  let dy = [0, -1, 0, 1];
+  let endFlag = false;
+  const go = (sx, sy) => {
+    if (sx < 0 || sy < 0 || sx >= N || sy >= M) return 0;
+    if (arr[sx][sy] == -1) return 0;
+    if (visit[sx][sy] == 1) {
+      process.exit(console.log(-1));
+    }
+    let val = arr[sx][sy];
+    let res = dp[sx][sy];
+    if (res) return res;
+    visit[sx][sy] = 1;
+    for (let i = 0; i < 4; i++) {
+      let nx = sx + dx[i] * val;
+      let ny = sy + dy[i] * val;
+      res = Math.max(res, go(nx, ny) + 1);
+      dp[sx][sy] = res;
+    }
+    visit[sx][sy] = 0;
+    return res;
+  };
+  console.log(go(0, 0));
+});
