@@ -1,0 +1,30 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [T, W] = input[0].split(" ").map(Number);
+  const arr = new Array(T);
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = Number(input[i + 1]);
+  }
+  const dp = new Array(T)
+    .fill(0)
+    .map(() => new Array(2).fill(0).map(() => new Array(W).fill(0)));
+  const go = (index, pos, move) => {
+    if (move < 0) {
+      return -10e9;
+    }
+    if (index == T) return 0;
+    if (dp[index][pos][move]) return dp[index][pos][move];
+    return (dp[index][pos][move] =
+      Math.max(go(index + 1, pos ^ 1, move - 1), go(index + 1, pos, move)) +
+      (pos == arr[index] - 1));
+  };
+  console.log(Math.max(go(0, 1, W - 1), go(0, 0, W)));
+});
