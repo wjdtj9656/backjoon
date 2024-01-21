@@ -1,0 +1,26 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [n, k] = input[0].split(" ").map(Number);
+  const coinArr = [];
+  for (let i = 1; i <= n; i++) {
+    coinArr.push(Number(input[i]));
+  }
+  coinArr.sort((a, b) => a - b);
+  const dp = new Array(k + 1).fill(0);
+  dp[0] = 1;
+  for (let i = 0; i < coinArr.length; i++) {
+    if (coinArr[i] >= 10001) continue;
+    for (let j = coinArr[i]; j <= k; j++) {
+      dp[j] = dp[j] + dp[j - coinArr[i]];
+    }
+  }
+  console.log(dp[k]);
+});
