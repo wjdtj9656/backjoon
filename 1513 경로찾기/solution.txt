@@ -1,0 +1,49 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M, C] = input[0].split(" ").map(Number);
+  const map = new Array(51).fill(0).map(() => new Array(51).fill(0));
+  for (let i = 1; i <= C; i++) {
+    const [x, y] = input[i].split(" ").map(Number);
+    map[x][y] = i;
+  }
+  let dp = new Array(51)
+    .fill(-1)
+    .map(() =>
+      new Array(51)
+        .fill(-1)
+        .map(() => new Array(51).fill(-1).map(() => new Array(51).fill(-1)))
+    );
+  const go = (x, y, cnt, prev) => {
+    if (cnt < 0) return 0;
+    if (x > N || y > M) return 0;
+    if (x == N && y == M) {
+      if (cnt == 0 && map[x][y] == 0) return 1;
+      if (cnt == 1 && map[x][y] > prev) return 1;
+      return 0;
+    }
+    if (dp[x][y][cnt][prev] != -1) return dp[x][y][cnt][prev];
+    dp[x][y][cnt][prev] = 0;
+    if (map[x][y] == 0) {
+      dp[x][y][cnt][prev] =
+        (go(x + 1, y, cnt, prev) + go(x, y + 1, cnt, prev)) % 1000007;
+    } else if (map[x][y] > prev) {
+      dp[x][y][cnt][prev] =
+        (go(x + 1, y, cnt - 1, map[x][y]) + go(x, y + 1, cnt - 1, map[x][y])) %
+        1000007;
+    }
+    return dp[x][y][cnt][prev];
+  };
+  const res = [];
+  for (let i = 0; i <= C; i++) {
+    res.push(go(1, 1, i, 0));
+  }
+  console.log(res.join(" "));
+});
