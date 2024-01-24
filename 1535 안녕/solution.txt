@@ -1,0 +1,21 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const hp = input[1].split(" ").map(Number);
+  const fun = input[2].split(" ").map(Number);
+  const dp = new Array(101).fill(0);
+  const n = Number(input[0]);
+  for (let i = 0; i < n; i++) {
+    for (let j = 100; j > hp[i]; j--) {
+      dp[j] = Math.max(dp[j], dp[j - hp[i]] + fun[i]);
+    }
+  }
+  console.log(dp[100]);
+});
