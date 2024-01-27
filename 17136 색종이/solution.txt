@@ -1,0 +1,60 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const map = new Array(10);
+  for (let i = 0; i < 10; i++) {
+    map[i] = input[i].split(" ").map(Number);
+  }
+  const check = (x, y, value) => {
+    if (x + value > 10 || y + value > 10) return false;
+    for (let i = x; i < x + value; i++) {
+      for (let j = y; j < y + value; j++) {
+        if (map[i][j] != 1) return false;
+      }
+    }
+    return true;
+  };
+  const fill = (x, y, size, value) => {
+    for (let i = x; i < x + size; i++) {
+      for (let j = y; j < y + size; j++) {
+        map[i][j] = value;
+      }
+    }
+  };
+  let res = Infinity;
+  const limit = new Array(5).fill(0);
+  const go = (x, y, cnt) => {
+    if (cnt >= res) return;
+    if (y >= 10) {
+      go(x + 1, 0, cnt);
+      return;
+    }
+    if (x >= 10) {
+      res = Math.min(res, cnt);
+      return;
+    }
+    if (map[x][y] == 0) {
+      go(x, y + 1, cnt);
+      return;
+    }
+    for (let i = 5; i >= 1; i--) {
+      if (limit[i - 1] == 5) continue;
+      if (check(x, y, i)) {
+        limit[i - 1]++;
+        fill(x, y, i, 0);
+        go(x, y + i, cnt + 1);
+        fill(x, y, i, 1);
+        limit[i - 1]--;
+      }
+    }
+  };
+  go(0, 0, 0);
+  console.log(res == Infinity ? -1 : res);
+});
