@@ -1,0 +1,41 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const dp = new Array(n)
+    .fill(0)
+    .map(() => new Array(10).fill(0).map(() => new Array(1 << 10).fill(0)));
+  const mod = 1_000_000_000;
+  for (let i = 1; i <= 9; i++) {
+    dp[0][i][1 << i] = 1;
+  }
+  for (let i = 1; i < n; i++) {
+    for (let j = 0; j <= 9; j++) {
+      for (let k = 0; k < 1 << 10; k++) {
+        let visit = k | (1 << j);
+        if (j == 0) {
+          dp[i][j][visit] += dp[i - 1][j + 1][k] % mod;
+        } else if (j == 9) {
+          dp[i][j][visit] += dp[i - 1][j - 1][k] % mod;
+        } else {
+          dp[i][j][visit] +=
+            (dp[i - 1][j - 1][k] % mod) + (dp[i - 1][j + 1][k] % mod);
+        }
+        dp[i][j][visit] %= mod;
+      }
+    }
+  }
+  let res = 0;
+  for (let i = 0; i <= 9; i++) {
+    res += dp[n - 1][i][(1 << 10) - 1] % mod;
+    res %= mod;
+  }
+  console.log(res);
+});
