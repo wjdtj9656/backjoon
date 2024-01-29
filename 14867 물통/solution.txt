@@ -1,0 +1,54 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [a, b, c, d] = input[0].split(" ").map(Number);
+
+  const dp = new Map();
+  const go = (n1, n2) => {
+    if (n1 == c && n2 == d) {
+      return 0;
+    }
+    if (dp.has(`${n1}-${n2}`)) return dp.get(`${n1}-${n2}`);
+    dp.set(`${n1}-${n2}`, Infinity);
+    let val1 = 0;
+    let val2 = a;
+    if (n1 + n2 <= a) {
+      val1 = 0;
+      val2 = n1 + n2;
+    } else {
+      val1 = n1 + n2 - a;
+      val2 = a;
+    }
+    let val3 = 0;
+    let val4 = 0;
+    if (n1 + n2 <= b) {
+      val3 = 0;
+      val4 = n1 + n2;
+    } else {
+      val3 = n1 + n2 - b;
+      val4 = b;
+    }
+    dp.set(
+      `${n1}-${n2}`,
+      Math.min(
+        dp.get(`${n1}-${n2}`),
+        go(n1, b) + 1,
+        go(a, n2) + 1,
+        go(n1, 0) + 1,
+        go(0, n2) + 1,
+        go(val2, val1) + 1,
+        go(val3, val4) + 1
+      )
+    );
+    return dp.get(`${n1}-${n2}`);
+  };
+  const res = go(0, 0);
+  console.log(res == Infinity ? -1 : res);
+});
