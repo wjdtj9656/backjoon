@@ -1,0 +1,34 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const a = Number(input[0]) / 100;
+  const b = Number(input[1]) / 100;
+  const isPri = [2, 3, 5, 7, 11, 13, 17, 19];
+  const dp = new Array(20)
+    .fill(-1)
+    .map(() => new Array(20).fill(-1).map(() => new Array(20).fill(-1)));
+  const go = (now, A, B) => {
+    if (now == 18) {
+      if (isPri.includes(A) || isPri.includes(B)) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+    if (dp[now][A][B] >= -0.5) return dp[now][A][B];
+    dp[now][A][B] = 0;
+    dp[now][A][B] += go(now + 1, A + 1, B) * a * (1 - b);
+    dp[now][A][B] += go(now + 1, A, B + 1) * (1 - a) * b;
+    dp[now][A][B] += go(now + 1, A + 1, B + 1) * a * b;
+    dp[now][A][B] += go(now + 1, A, B) * (1 - a) * (1 - b);
+    return dp[now][A][B];
+  };
+  console.log(go(0, 0, 0));
+});
