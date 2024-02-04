@@ -1,0 +1,50 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, C] = input[0].split(" ").map(Number);
+  const arr = input[1].split(" ").map(Number);
+
+  const go = (here, n, arrr, sum) => {
+    if (sum > C) return;
+    if (here > n) {
+      arrr.push(sum);
+      return;
+    }
+    go(here + 1, n, arrr, sum + arr[here]);
+    go(here + 1, n, arrr, sum);
+    return;
+  };
+
+  const arr1 = [];
+  const arr2 = [];
+  go(0, ((N / 2) >> 0) - 1, arr1, 0);
+  go((N / 2) >> 0, N - 1, arr2, 0);
+  arr1.sort((a, b) => a - b);
+  arr2.sort((a, b) => a - b);
+  const search = (arr, goal) => {
+    let left = 0;
+    let right = arr.length;
+    while (left < right) {
+      let mid = (left + right) >> 1;
+      if (arr[mid] <= goal) {
+        left = mid + 1;
+      } else {
+        right = mid;
+      }
+    }
+    return left;
+  };
+  let res = 0;
+  for (let i = 0; i < arr2.length; i++) {
+    // console.log(search(arr1, C - arr2[i]));
+    if (C - arr2[i] >= 0) res += search(arr1, C - arr2[i]);
+  }
+  console.log(res);
+});
