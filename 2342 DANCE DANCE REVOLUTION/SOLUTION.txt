@@ -1,0 +1,32 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const arr = input[0].split(" ").map(Number);
+  arr.pop();
+  console.log(arr);
+  const n = arr.length;
+  const dp = new Array(5)
+    .fill(-1)
+    .map(() => new Array(5).fill(-1).map(() => new Array(5).fill(-1)));
+  const check = (from, to) => {
+    if (from == 0) return 2;
+    if (from == to) return 1;
+    if (Math.abs(from - to) == 2) return 4;
+    return 3;
+  };
+  const go = (left, right, index) => {
+    if (index == n) return 0;
+    if (dp[left][right][index] != -1) return dp[left][right][index];
+    const r1 = go(arr[index], right, index + 1) + check(left, arr[index]);
+    const r2 = go(left, arr[index], index + 1) + check(right, arr[index]);
+    return (dp[left][right][index] = Math.min(r1, r2));
+  };
+  console.log(go(0, 0, 0));
+});
