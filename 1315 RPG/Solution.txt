@@ -1,0 +1,47 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const arr = [];
+  for (let i = 0; i < n; i++) {
+    arr[i] = input[i + 1].split(" ").map(Number);
+  }
+  const dp = new Array(1001).fill(-1).map(() => new Array(1001).fill(-1));
+  const visit = new Array(101).fill(false);
+
+  const go = (str, int) => {
+    if (dp[str][int] != -1) return dp[str][int];
+
+    dp[str][int] = 0;
+    let pnt = 0;
+    const v = [];
+    for (let i = 0; i < n; i++) {
+      if (arr[i][0] <= str || arr[i][1] <= int) {
+        dp[str][int]++;
+        if (!visit[i]) {
+          visit[i] = true;
+          pnt += arr[i][2];
+          v.push(i);
+        }
+      }
+    }
+    for (let p = 0; p <= pnt; p++) {
+      let nStr = Math.min(1000, str + p);
+      let nInt = Math.min(1000, int + pnt - p);
+      dp[str][int] = Math.max(dp[str][int], go(nStr, nInt));
+    }
+    for (let here of v) {
+      visit[here] = false;
+    }
+    return dp[str][int];
+  };
+  console.log(go(1, 1));
+});
