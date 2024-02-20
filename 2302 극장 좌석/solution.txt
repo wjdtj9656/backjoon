@@ -1,0 +1,35 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const m = Number(input[1]);
+  const vip = new Array(41).fill(false);
+  const dp = new Array(41).fill(-1);
+  for (let i = 0; i < m; i++) {
+    const num = Number(input[i + 2]);
+    vip[num - 1] = true;
+  }
+  const go = (index) => {
+    if (index >= n - 1) {
+      return 1;
+    }
+    if (vip[index]) return go(index + 1);
+    if (dp[index] != -1) return dp[index];
+    dp[index] = 0;
+    if (vip[index + 1]) {
+      dp[index] += go(index + 1);
+    } else {
+      dp[index] += go(index + 2) + go(index + 1);
+    }
+    return dp[index];
+  };
+  console.log(go(0));
+});
