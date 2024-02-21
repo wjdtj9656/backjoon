@@ -1,0 +1,64 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const arr1 = input[1].split("").map(Number);
+  const arr2 = input[2].split("").map(Number);
+  const mod = (x) => {
+    return x < 0 ? x + 10 : x % 10;
+  };
+  const dp = new Array(n)
+    .fill(0)
+    .map(() =>
+      new Array(10)
+        .fill(0)
+        .map(() =>
+          new Array(10)
+            .fill(0)
+            .map(() => new Array(10).fill(0).map(() => new Array(2).fill(-1)))
+        )
+    );
+
+  const go = (index, x, y, z, flag) => {
+    if (index == n) return 0;
+    if (dp[index][x][y][z][flag] != -1) return dp[index][x][y][z][flag];
+    if (mod(x + arr1[index]) == mod(arr2[index]))
+      return (dp[index][x][y][z][flag] = Math.min(
+        go(index + 1, y, z, 0, 0),
+        go(index + 1, y, z, 0, 1)
+      ));
+    dp[index][x][y][z][flag] = Infinity;
+    const _flag = flag ? 1 : -1;
+    for (let i = 1; i <= 3; i++) {
+      dp[index][x][y][z][flag] = Math.min(
+        dp[index][x][y][z][flag],
+        1 + go(index, mod(x + i * _flag), y, z, flag)
+      );
+      dp[index][x][y][z][flag] = Math.min(
+        dp[index][x][y][z][flag],
+        1 + go(index, mod(x + i * _flag), mod(y + i * _flag), z, flag)
+      );
+      dp[index][x][y][z][flag] = Math.min(
+        dp[index][x][y][z][flag],
+        1 +
+          go(
+            index,
+            mod(x + i * _flag),
+            mod(y + i * _flag),
+            mod(z + i * _flag),
+            flag
+          )
+      );
+    }
+    return dp[index][x][y][z][flag];
+  };
+  console.log(Math.min(go(0, 0, 0, 0, 0), go(0, 0, 0, 0, 1)));
+});
