@@ -1,0 +1,49 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const tc = Number(input[0]);
+  const check = (s1, s2) => {
+    if (s1 == "" && s2 == "") return false;
+    if (s1 == "") return true;
+    if (s1.length == s2.length) return s2 < s1;
+    return s2.length < s1.length;
+  };
+  const map = new Map();
+  const dp = new Array(1001).fill(0);
+  map.set("1", "(");
+  map.set("2", ")");
+  map.set("3", "{");
+  map.set("4", "}");
+  map.set("5", "[");
+  map.set("6", "]");
+  dp[1] = "12";
+  dp[2] = "34";
+  dp[3] = "56";
+  for (let j = 1; j <= 1000; j++) {
+    if (j % 2 == 0 && check(dp[j], "1" + dp[j / 2] + "2"))
+      dp[j] = "1" + dp[j / 2] + "2";
+    if (j % 3 == 0 && check(dp[j], "3" + dp[j / 3] + "4"))
+      dp[j] = "3" + dp[j / 3] + "4";
+    if (j % 5 == 0 && check(dp[j], "5" + dp[j / 5] + "6"))
+      dp[j] = "5" + dp[j / 5] + "6";
+    for (let k = 1; k <= j; k++) {
+      if (check(dp[j], dp[k] + dp[j - k])) dp[j] = dp[k] + dp[j - k];
+    }
+  }
+  for (let i = 0; i < tc; i++) {
+    let res = dp[input[i + 1]];
+    let ans = "";
+    for (let j = 0; j < res.length; j++) {
+      ans += map.get(res[j]);
+    }
+    console.log(ans);
+  }
+});
