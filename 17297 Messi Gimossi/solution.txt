@@ -1,0 +1,26 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  let num = Number(input[0]);
+  num--;
+  const s = "Messi Gimossi";
+  const dp = new Array(100).fill(0);
+  dp[1] = 5;
+  dp[2] = 13;
+
+  for (let i = 3; i < 100; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2] + 1;
+  }
+  for (let i = 99; i >= 2; i--) {
+    if (num >= dp[i]) num -= dp[i] + 1;
+  }
+  if (num == -1 || num == 5) console.log("Messi Messi Gimossi");
+  else console.log(s[num]);
+});
