@@ -1,0 +1,48 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+const max = 200000;
+const tCnt = new Array(max + 1).fill(0);
+const tSum = new Array(max + 1).fill(0);
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const n = Number(input[0]);
+  const update = (arr, index, val) => {
+    while (index <= max) {
+      arr[index] += val;
+      index += index & -index;
+    }
+  };
+  const sum = (arr, val) => {
+    let res = 0;
+    let i = val;
+    while (i > 0) {
+      res += arr[i];
+      i -= i & -i;
+    }
+    return res;
+  };
+  const cal = (arr, s, e) => {
+    if (s > e) return 0;
+    return sum(arr, e) - sum(arr, s - 1);
+  };
+  let res = 1;
+  for (let i = 1; i <= n; i++) {
+    let val = Number(input[i]);
+    val++;
+    if (i != 1) {
+      let left = val * cal(tCnt, 1, val - 1) - cal(tSum, 1, val - 1);
+      let right = cal(tSum, val + 1, max) - val * cal(tCnt, val + 1, max);
+      res *= (left + right) % 1000000007;
+      res %= 1000000007;
+    }
+    update(tCnt, val, 1);
+    update(tSum, val, val);
+  }
+  console.log(res);
+});
