@@ -1,0 +1,47 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const testcase = Number(input[0]);
+  let inputIndex = 1;
+  for (let tc = 0; tc < testcase; tc++) {
+    const tree = new Array(200004).fill(0);
+    const [n, m] = input[inputIndex++].split(" ").map(Number);
+    const map = new Map();
+    const arr = input[inputIndex++].split(" ").map(Number);
+    const update = (index, val) => {
+      while (index <= 200004) {
+        tree[index] += val;
+        index += index & -index;
+      }
+    };
+    const sum = (index) => {
+      let temp = 0;
+      while (index > 0) {
+        temp += tree[index];
+        index -= index & -index;
+      }
+      return temp;
+    };
+    let uIndex = 100001;
+    for (let i = 1; i <= n; i++) {
+      update(i + uIndex, 1);
+      map.set(i, i + uIndex);
+    }
+    const res = [];
+    for (let i = 0; i < m; i++) {
+      let idx = map.get(arr[i]);
+      res.push(sum(idx) - 1);
+      update(idx, -1);
+      update(--uIndex, 1);
+      map.set(arr[i], uIndex);
+    }
+    console.log(res.join(" "));
+  }
+});
