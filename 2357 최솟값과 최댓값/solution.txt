@@ -17,41 +17,51 @@ rl.on("line", (line) => {
   for (let i = N + 1; i < N + M + 1; i++) {
     arr2.push(input[i].split(" ").map(Number));
   }
-  const tree = new Array(N + 1).fill([Infinity, 0]);
-  // const tree = new Array(N + 1).fill(0);
-  const tree2 = new Array(N + 1).fill([Infinity, 0]);
-  const update = (i, val) => {
+  const tree = new Array(N + 1).fill().map(() => [Infinity, 0]);
+  const tree2 = new Array(N + 1).fill().map(() => [Infinity, 0]);
+  const update = (i, target) => {
     while (i <= N) {
-      tree[i][0] = Math.min(tree[i][0], val);
-      tree[i][1] = Math.max(tree[i][1], val);
+      tree[i][0] = Math.min(tree[i][0], target);
+      tree[i][1] = Math.max(tree[i][1], target);
       i += i & -i;
     }
   };
-  const update2 = (index, val) => {
+  const update2 = (i, target) => {
     while (i > 0) {
-      tree2[i][0] = min(tree2[i][0], val);
-      tree2[i][1] = max(tree2[i][1], val);
+      tree2[i][0] = Math.min(tree2[i][0], target);
+      tree2[i][1] = Math.max(tree2[i][1], target);
       i -= i & -i;
     }
   };
-  const find = (index) => {
-    let max = 0;
-    let min = Infinity;
-    while (index > 0) {
-      max = Math.max(max, maxTree[index]);
-      min = Math.min(min, minTree[index]);
-      index -= index & -index;
-    }
-    return [max, min];
-  };
   for (let i = 1; i <= N; i++) {
     update(i, arr1[i]);
-    // update2(i, arr1[i]);
+    update2(i, arr1[i]);
   }
+  const find = (start, end) => {
+    let min = Infinity;
+    let max = 0;
+    let prev = start;
+    let cur = prev + (prev & -prev);
+    while (cur <= end) {
+      min = Math.min(min, tree2[prev][0]);
+      max = Math.max(max, tree2[prev][1]);
+      prev = cur;
+      cur = prev + (prev & -prev);
+    }
+    min = Math.min(min, arr1[prev]);
+    max = Math.max(max, arr1[prev]);
 
-  // console.log(arr1);
-  // console.log(arr2);
-  console.log(tree);
-  // console.log(tree2);
-  //console.log(find(9));
+    prev = end;
+    cur = prev - (prev & -prev);
+    while (cur >= start) {
+      min = Math.min(min, tree[prev][0]);
+      max = Math.max(max, tree[prev][1]);
+      prev = cur;
+      cur = prev - (prev & -prev);
+    }
+    console.log(min, max);
+  };
+  for (let i = 1; i < arr2.length; i++) {
+    find(arr2[i][0], arr2[i][1]);
+  }
 });
