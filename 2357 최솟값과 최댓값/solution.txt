@@ -1,0 +1,57 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M] = input[0].split(" ").map(Number);
+  const arr1 = [-1];
+  const arr2 = [-1];
+  for (let i = 1; i <= N; i++) {
+    arr1.push(Number(input[i]));
+  }
+  for (let i = N + 1; i < N + M + 1; i++) {
+    arr2.push(input[i].split(" ").map(Number));
+  }
+  const tree = new Array(N + 1).fill([Infinity, 0]);
+  // const tree = new Array(N + 1).fill(0);
+  const tree2 = new Array(N + 1).fill([Infinity, 0]);
+  const update = (i, val) => {
+    while (i <= N) {
+      tree[i][0] = Math.min(tree[i][0], val);
+      tree[i][1] = Math.max(tree[i][1], val);
+      i += i & -i;
+    }
+  };
+  const update2 = (index, val) => {
+    while (i > 0) {
+      tree2[i][0] = min(tree2[i][0], val);
+      tree2[i][1] = max(tree2[i][1], val);
+      i -= i & -i;
+    }
+  };
+  const find = (index) => {
+    let max = 0;
+    let min = Infinity;
+    while (index > 0) {
+      max = Math.max(max, maxTree[index]);
+      min = Math.min(min, minTree[index]);
+      index -= index & -index;
+    }
+    return [max, min];
+  };
+  for (let i = 1; i <= N; i++) {
+    update(i, arr1[i]);
+    // update2(i, arr1[i]);
+  }
+
+  // console.log(arr1);
+  // console.log(arr2);
+  console.log(tree);
+  // console.log(tree2);
+  //console.log(find(9));
+});
