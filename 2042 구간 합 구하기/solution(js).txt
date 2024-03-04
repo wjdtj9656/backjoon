@@ -1,0 +1,54 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M, K] = input[0].split(" ").map(Number);
+  let arr = Array.from({ length: N + 1 }, () => BigInt(0));
+  let fen = Array.from({ length: N + 1 }, () => BigInt(0));
+
+  function sum(i) {
+    let result = BigInt(0);
+    while (i > 0) {
+      result += fen[i];
+      i -= i & -i;
+    }
+    return result;
+  }
+
+  function update(i, diff) {
+    while (i <= N) {
+      fen[i] += diff;
+      i += i & -i;
+    }
+  }
+
+  for (let i = 1; i <= N; i++) {
+    num = BigInt(input[i]);
+    arr[i] = num;
+    update(i, num);
+  }
+  let result = [];
+  for (let i = N + 1; i < N + 1 + M + K; i++) {
+    let [a, b, c] = input[i].split(" ");
+    if (a == "1") {
+      b = Number(b);
+      const diff = BigInt(c) - arr[b];
+      arr[b] = BigInt(c);
+      update(b, diff);
+    } else if (a == "2") {
+      [b, c] = [b, c].map(Number);
+      let sum1 = sum(c);
+      let sum2 = sum(b - 1);
+      let val = sum(c) - sum(b - 1);
+      result.push(val.toString());
+    }
+  }
+  console.log(result.join("\n"));
+});
