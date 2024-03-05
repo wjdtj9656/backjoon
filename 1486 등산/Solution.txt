@@ -1,0 +1,66 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M, T, D] = input[0].split(" ").map(Number);
+  const arr = new Array(N).fill(0).map(() => new Array(N).fill(0));
+  for (let i = 0; i < N; i++) {
+    arr[i] = input[i + 1].split("").map((v) => {
+      let num = v.charCodeAt(0) - 65;
+      if (num >= 32) {
+        num -= 6;
+      }
+      return num;
+    });
+  }
+  const pos = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < M; j++) {
+      pos.push(i * 100 + j);
+    }
+  }
+  const dx = [-1, 0, 1, 0];
+  const dy = [0, -1, 0, 1];
+  const dis = new Array(3000)
+    .fill(Infinity)
+    .map(() => new Array(3000).fill(Infinity));
+
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < M; j++) {
+      for (let k = 0; k < 4; k++) {
+        let nx = i + dx[k];
+        let ny = j + dy[k];
+        if (nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+        let value = Math.abs(arr[i][j] - arr[nx][ny]);
+        if (value <= T) {
+          if (arr[nx][ny] > arr[i][j]) {
+            dis[i * 100 + j][nx * 100 + ny] = value * value;
+          } else {
+            dis[i * 100 + j][nx * 100 + ny] = 1;
+          }
+        }
+      }
+    }
+  }
+  for (let k of pos) {
+    for (let i of pos) {
+      for (let j of pos) {
+        if (dis[i][j] > dis[i][k] + dis[k][j])
+          dis[i][j] = dis[i][k] + dis[k][j];
+      }
+    }
+  }
+  let res = arr[0][0];
+  for (let i of pos) {
+    if (D >= dis[0][i] + dis[i][0]) {
+      res = Math.max(res, arr[(i / 100) >> 0][i % 100]);
+    }
+  }
+  console.log(res);
+});
