@@ -1,0 +1,56 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M] = input[0].split(" ").map(Number);
+  const arr = new Array(1025).fill(0).map(() => new Array(1025).fill(0));
+  const fen = new Array(1025).fill(0).map(() => new Array(1025).fill(0));
+  const update = (x, y, val) => {
+    while (x <= N) {
+      let j = y;
+      while (j <= N) {
+        fen[x][j] += val;
+        j += j & -j;
+      }
+      x += x & -x;
+    }
+  };
+  const sum = (x, y) => {
+    let res = 0;
+    while (x > 0) {
+      let j = y;
+      while (j > 0) {
+        res += fen[x][j];
+        j -= j & -j;
+      }
+      x -= x & -x;
+    }
+    return res;
+  };
+  for (let i = 1; i <= N; i++) {
+    arr[i] = input[i].split(" ").map(Number);
+    arr[i].unshift(0);
+  }
+  for (let i = 1; i <= N; i++) {
+    for (let j = 1; j <= N; j++) {
+      update(i, j, arr[i][j]);
+    }
+  }
+  for (let i = N + 1; i < N + M + 1; i++) {
+    const [w, x1, y1, x2, y2] = input[i].split(" ").map(Number);
+    if (w == 1) {
+      console.log(
+        sum(x2, y2) - sum(x1 - 1, y2) - sum(x2, y1 - 1) + sum(x1 - 1, y1 - 1)
+      );
+    } else {
+      update(x1, y1, x2 - arr[x1][y1]);
+      arr[x1][y1] = x2;
+    }
+  }
+});
