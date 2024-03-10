@@ -1,0 +1,31 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [n, k] = input[0].split(" ").map(Number);
+  const dis = new Array(n).fill(0).map(() => new Array(n).fill(0));
+  for (let i = 1; i <= k; i++) {
+    const [a, b] = input[i].split(" ").map(Number);
+    dis[a - 1][b - 1] = -1;
+    dis[b - 1][a - 1] = 1;
+  }
+  for (let k = 0; k < n; k++) {
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (dis[i][k] == 1 && dis[k][j] == 1) dis[i][j] = 1;
+        if (dis[i][k] == -1 && dis[k][j] == -1) dis[i][j] = -1;
+      }
+    }
+  }
+  const kk = Number(input[1 + k]);
+  for (let i = 2 + k; i < 2 + k + kk; i++) {
+    const [a, b] = input[i].split(" ").map(Number);
+    console.log(dis[a - 1][b - 1]);
+  }
+});
