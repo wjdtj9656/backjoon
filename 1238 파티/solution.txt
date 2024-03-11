@@ -1,0 +1,101 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+class MinHeap {
+  constructor() {
+    this.heap = [null];
+  }
+  swap(s1, s2) {
+    [this.heap[s1], this.heap[s2]] = [this.heap[s2], this.heap[s1]];
+  }
+  length() {
+    return this.heap.length - 1;
+  }
+  push(val) {
+    this.heap.push(val);
+    let c = this.heap.length - 1;
+    let p = (c / 2) >> 0;
+    while (p != 0 && this.heap[c][1] < this.heap[p][1]) {
+      this.swap(c, p);
+      c = p;
+      p = (p / 2) >> 0;
+    }
+  }
+  pop() {
+    if (this.heap.length == 1) return;
+    if (this.heap.length == 2) return this.heap.pop();
+    let val = this.heap[1];
+    this.heap[1] = this.heap.pop();
+    let cur = 1;
+    let left = 2;
+    let right = 3;
+    while (
+      (this.heap[left] && this.heap[cur][1] > this.heap[left][1]) ||
+      (this.heap[right] && this.heap[cur][1] > this.heap[right][1])
+    ) {
+      if (this.heap[left] == undefined) {
+        this.swap(right, cur);
+      } else if (this.heap[right] == undefined) {
+        this.swap(left, cur);
+      } else if (this.heap[left][1] > this.heap[right][1]) {
+        this.swap(right, cur);
+        cur = right;
+      } else if (this.heap[right][1] >= this.heap[left][1]) {
+        this.swap(left, cur);
+        cur = left;
+      }
+      left = cur * 2;
+      right = cur * 2 + 1;
+    }
+    return val;
+  }
+}
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  let [N, M, X] = input[0].split(" ").map(Number);
+  X -= 1;
+  // const arr = new Array(N).fill(0).map(() => new Array(N).fill(Infinity));
+  const arr1 = new Array(N).fill(0).map(() => new Array());
+  const arr2 = new Array(N).fill(0).map(() => new Array());
+  for (let i = 1; i <= M; i++) {
+    const [a, b, c] = input[i].split(" ").map(Number);
+    arr1[a - 1].push([b - 1, c]);
+    arr2[b - 1].push([a - 1, c]);
+  }
+
+  const dijk = (dis, visit, start, arr) => {
+    dis.fill(Infinity);
+    visit.fill(false);
+
+    const q = new MinHeap();
+    q.push([start, 0]);
+    dis[start] = 0;
+    while (q.length()) {
+      const [to, val1] = q.pop();
+      if (visit[to]) continue;
+      visit[to] = true;
+      for (let [goal, val2] of arr[to]) {
+        if (dis[goal] > dis[to] + val2) {
+          dis[goal] = dis[to] + val2;
+          q.push([goal, dis[goal]]);
+        }
+      }
+    }
+  };
+  const dist1 = new Array(N).fill(Infinity);
+  const dist2 = new Array(N).fill(Infinity);
+  const visit1 = new Array(N).fill(false);
+  const visit2 = new Array(N).fill(false);
+  dijk(dist1, visit1, X, arr1);
+  dijk(dist2, visit2, X, arr2);
+  let max = 0;
+  for (let i = 0; i < dist1.length; i++) {
+    max = Math.max(max, dist1[i] + dist2[i]);
+  }
+  console.log(max);
+});
