@@ -1,0 +1,57 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, K] = input[0].split(" ").map(Number);
+  const arr = input[1].split(" ").map(Number);
+  now = new Array(arr.length).fill(false);
+  let cnt = 0;
+  let step = 0;
+  const len = 2 * N;
+  const rotate = () => {
+    let tmp_arr = arr[len - 1];
+    let tmp_now = now[len - 1];
+
+    for (let i = len - 1; i >= 1; i--) {
+      arr[i] = arr[i - 1];
+      now[i] = now[i - 1];
+    }
+
+    arr[0] = tmp_arr;
+    now[0] = tmp_now;
+
+    if (now[N - 1]) now[N - 1] = false;
+  };
+
+  const move = () => {
+    for (let i = N - 2; i >= 1; i--) {
+      if (!now[i]) continue;
+      let next = (i + 1) % len;
+      if (!now[next] && arr[next] >= 1) {
+        if (--arr[next] == 0) cnt++;
+        now[i] = false;
+        now[next] = next != N - 1 ? true : false;
+      }
+    }
+  };
+
+  const up = () => {
+    if (!now[0] && arr[0] >= 1) {
+      if (--arr[0] == 0) cnt++;
+      now[0] = true;
+    }
+  };
+  while (cnt < K) {
+    step++;
+    rotate();
+    move();
+    up();
+  }
+  console.log(step);
+});
