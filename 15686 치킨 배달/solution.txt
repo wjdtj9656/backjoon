@@ -1,0 +1,71 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const [N, M] = input[0].split(" ").map(Number);
+
+  const arr = [];
+  for (let i = 1; i <= N; i++) {
+    arr.push(input[i].split(" ").map(Number));
+  }
+  let mCnt = 0;
+  const homeList = [];
+  const shopList = [];
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      if (arr[i][j] == 2) {
+        shopList.push([i, j]);
+        mCnt++;
+      }
+      if (arr[i][j] == 1) {
+        homeList.push([i, j]);
+      }
+    }
+  }
+  let visit = new Array(N).fill(0);
+  const dx = [-1, 0, 1, 0];
+  const dy = [0, -1, 0, 1];
+  const mList = [];
+  const search = (start, now) => {
+    if (now.length == M) {
+      mList.push(now);
+      return;
+    }
+    for (let i = start; i < mCnt; i++) {
+      search(i + 1, [...now, i]);
+    }
+  };
+  search(0, []);
+  const getDis = () => {
+    let sum = 0;
+    homeList.forEach(([x, y]) => {
+      let min = Infinity;
+      shopList.forEach((_, index) => {
+        if (visit[index] == 1) {
+          const [cx, cy] = shopList[index];
+          min = Math.min(min, Math.abs(x - cx) + Math.abs(y - cy));
+        }
+      });
+      sum += min;
+    });
+    return sum;
+  };
+  let ans = Infinity;
+  for (let i = 0; i < mList.length; i++) {
+    for (let j = 0; j < mList[i].length; j++) {
+      visit[mList[i][j]] = 1;
+    }
+    ans = Math.min(ans, getDis());
+    for (let j = 0; j < mList[i].length; j++) {
+      visit[mList[i][j]] = 0;
+    }
+  }
+  console.log(ans);
+});
