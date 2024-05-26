@@ -1,0 +1,41 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const N = input[0];
+  const arr = input[1].split(" ").map(Number);
+  const money = Number(input[2]);
+
+  let left = 0;
+  let right = Math.max(...arr);
+  let maxValue = right;
+  let res = 0;
+  while (left < right) {
+    const mid = (left + right) >> 1;
+    let sum = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (mid > arr[i]) {
+        sum += arr[i];
+      } else {
+        sum += mid;
+      }
+    }
+    res = sum;
+    if (sum > money) {
+      right = mid;
+    } else {
+      left = mid + 1;
+    }
+  }
+  if (left == maxValue) {
+    console.log(left);
+  } else {
+    console.log(left - 1);
+  }
+});
