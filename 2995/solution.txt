@@ -1,0 +1,48 @@
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const input = [];
+rl.on("line", (line) => {
+  input.push(line);
+}).on("close", () => {
+  const nextPermutation = (nums) => {
+    let i = nums.length - 1;
+    while (i > 0 && nums[i - 1] >= nums[i]) {
+      i--;
+    }
+
+    if (i <= 0) {
+      return false;
+    }
+
+    let j = nums.length - 1;
+    while (nums[j] <= nums[i - 1]) {
+      j--;
+    }
+
+    [nums[i - 1], nums[j]] = [nums[j], nums[i - 1]];
+
+    let start = i;
+    let end = nums.length - 1;
+    while (start < end) {
+      [nums[start], nums[end]] = [nums[end], nums[start]];
+      start++;
+      end--;
+    }
+
+    return true;
+  };
+
+  const inputNum = input[0];
+  const numArr = inputNum.split("").map(Number);
+
+  if (nextPermutation(numArr)) {
+    const result = numArr.join("");
+    console.log(result);
+  } else {
+    console.log(0);
+  }
+});
